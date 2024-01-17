@@ -3,12 +3,12 @@ import pygame
 import sys
 import math
 import os
-
+from pygame.locals import *
 
 BLUE = (0, 0, 255)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
-YELLOW = (255, 255, 0)
+GREEN = (255, 255, 0)
 pygame.init()
 pygame.key.set_repeat(200, 70)
 FPS = 50
@@ -74,6 +74,24 @@ def start_screen():
         clock.tick(FPS)
 
 
+def end_screen():
+    fon = pygame.transform.scale(load_image("fon3.png"), (WIDTH, HEIGHT))
+    screen.blit(fon, (0, 0))
+    font = pygame.font.Font(None, 30)
+    if winning_move(board, 1):
+        label = myfont.render("Выиграл первый игрок!", 1, RED)
+        screen.blit(label, (40, 10))
+    if winning_move(board, 2):
+        label = myfont.render("Выиграл второй игрок!", 1, GREEN)
+        screen.blit(label, (40, 10))
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                terminate()
+        pygame.display.flip()
+        clock.tick(FPS)
+
+
 def create_board():
     board = np.zeros((gor_count, her_count))
     return board
@@ -103,8 +121,6 @@ def winning_move(board, piece):
                 and board[r][c + 3] == piece
             ):
                 return True
-
-    # Check vertical locations for win
     for c in range(her_count):
         for r in range(gor_count - 3):
             if (
@@ -168,7 +184,7 @@ def draw_board(board):
             elif board[r][c] == 2:
                 pygame.draw.circle(
                     screen,
-                    YELLOW,
+                    GREEN,
                     (
                         int(c * size_s + size_s / 2),
                         height - int(r * size_s + size_s / 2),
@@ -189,40 +205,30 @@ size = (width, height)
 radius = int(size_s / 2 - 5)
 screen = pygame.display.set_mode(size)
 start_screen()
-
 draw_board(board)
 pygame.display.update()
-
 myfont = pygame.font.SysFont("monospace", 75)
-
 while not game_over:
-
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             sys.exit()
-
         if event.type == pygame.MOUSEMOTION:
             pygame.draw.rect(screen, BLACK, (0, 0, width, size_s))
             posx = event.pos[0]
             if turn == 0:
                 pygame.draw.circle(screen, RED, (posx, int(size_s / 2)), radius)
             else:
-                pygame.draw.circle(screen, YELLOW, (posx, int(size_s / 2)), radius)
+                pygame.draw.circle(screen, GREEN, (posx, int(size_s / 2)), radius)
         pygame.display.update()
-
         if event.type == pygame.MOUSEBUTTONDOWN:
             pygame.draw.rect(screen, BLACK, (0, 0, width, size_s))
             if turn == 0:
                 posx = event.pos[0]
                 col = int(math.floor(posx / size_s))
-
                 if is_valid_location(board, col):
                     row = get_next_open_row(board, col)
                     drop_piece(board, row, col, 1)
-
                     if winning_move(board, 1):
-                        label = myfont.render("Выиграл первый игрок!", 1, RED)
-                        screen.blit(label, (40, 10))
                         game_over = True
             else:
                 posx = event.pos[0]
@@ -231,11 +237,8 @@ while not game_over:
                     row = get_next_open_row(board, col)
                     drop_piece(board, row, col, 2)
                     if winning_move(board, 2):
-                        label = myfont.render("Выиграл второй игрок!", 1, YELLOW)
-                        screen.blit(label, (40, 10))
                         game_over = True
             draw_board(board)
             turn += 1
             turn = turn % 2
-    if game_over:
-        pygame.time.wait(1000)
+end_screen()
