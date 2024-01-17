@@ -43,7 +43,7 @@ def load_image(name, color_key=None):
 
 def start_screen():
     intro_text = [
-        "Начало игры",
+        "Четыре в ряд",
         "",
         "Игра для двоих, в которой игроки сначала выбирают цвет фишек,",
         "а затем ходят по очереди, роняя фишки в ячейки",
@@ -152,6 +152,7 @@ def winning_move(board, piece):
 
 
 def draw_board(board):
+    pygame.draw.rect(screen, BLACK, (0, 0, width, size_s))
     for c in range(her_count):
         for r in range(gor_count):
             pygame.draw.rect(
