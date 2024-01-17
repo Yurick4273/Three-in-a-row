@@ -3,7 +3,7 @@ import pygame
 import sys
 import math
 import os
-from pygame.locals import *
+
 
 BLUE = (0, 0, 255)
 BLACK = (0, 0, 0)
@@ -43,7 +43,7 @@ def load_image(name, color_key=None):
 
 def start_screen():
     intro_text = [
-        "Четыре в ряд",
+        "                                              Четыре в ряд",
         "",
         "Игра для двоих, в которой игроки сначала выбирают цвет фишек,",
         "а затем ходят по очереди, роняя фишки в ячейки",
@@ -88,6 +88,8 @@ def end_screen():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 terminate()
+            elif event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
+                star_game()
         pygame.display.flip()
         clock.tick(FPS)
 
@@ -200,7 +202,7 @@ game_over = False
 turn = 0
 pygame.init()
 size_s = 100
-width = her_count * size_s
+width = her_count * size
 height = (gor_count + 1) * size_s
 size = (width, height)
 radius = int(size_s / 2 - 5)
